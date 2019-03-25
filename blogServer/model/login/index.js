@@ -20,10 +20,11 @@ exports.checkName = async function(ctx, next) {
 }
 
 exports.login = async function(ctx, next) {
-    let params = ctx.request.query, 
+    let params = ctx.request.body,
         code = 200,
         msg,
-        result
+        token,
+        result;
     if (JSON.stringify(params) == "{}") {
         result = null
     }else {
@@ -32,12 +33,14 @@ exports.login = async function(ctx, next) {
     if (result && result.length == 1) {
         code = 1
         msg = "登录成功！"
+        token = '1111111'
     } else {
         code = 0
         msg = "登录失败！"
     }
     ctx.body = {
         code: code,
-        msg: msg
+        msg: msg,
+        token: token
     }
 }

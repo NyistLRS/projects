@@ -8,9 +8,12 @@ export default class PerMission extends React.Component {
         const { pathname } = location
         const isLogin = localStorage.getItem('__config_center_token')
         let component1
-        if(!isLogin && pathname !== "/login") { // 判断是否登录
+        if(!isLogin) { // 判断是否登录
             return <Redirect to="/login"></Redirect>
         }else {
+            if (pathname === '/login') {
+                return <Redirect to="/"></Redirect>
+            }
             component1 = config.getCurrntRoute(pathname, config.routerConfig)
             return <Route exact path={pathname} component={component1.component}></Route>
         }

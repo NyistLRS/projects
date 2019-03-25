@@ -20,6 +20,6 @@ app.use(router.routes())
 
 app.listen(8083)
 
-console.log()
+console.log("you application on http://localhost:8083")
 
 
