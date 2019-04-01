@@ -7,4 +7,8 @@ module.exports = {
             return `SELECT * FROM USER WHERE NAME = '${name}' AND PASSWORD = '${psw}'`
         }
     },
+    menu: {
+        getAdminMenu: 'SELECT * FROM ADMIN_MENU',
+        getMenuInfo: 'SELECT * FROM ADMIN_MENU'
+    }
 }

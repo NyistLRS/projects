@@ -5,7 +5,6 @@ import AppMain from '../views/layout/index'
 
 export default class MainRouter extends Component {
     render() {
-        debugger
         let { location, config } = this.props
         let pathname = location.pathname
         if(pathname === '/login') {

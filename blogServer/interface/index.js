@@ -3,6 +3,7 @@ const router = require("koa-router")({
 })
 
 const login = require("../model/login/index.js")
+const menu = require('../model/menu/index.js')
 
 // router.get("/checkName", (ctx) => {
 //     console.log(ctx.request.query.name)
@@ -18,6 +19,8 @@ const login = require("../model/login/index.js")
 // })
 router.get("/checkName", login.checkName)
 router.post("/login", login.login)
+router.get('/admin/getMenus', menu.getAdminMenu)
+router.get('/admin/getMenuInfo', menu.getMenuInfo)
 
 module.exports = router
 
