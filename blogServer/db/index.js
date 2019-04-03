@@ -12,7 +12,7 @@ module.exports = (sql, params) => {
                 reject(err)
             }else {
                 console.log("连接成功")
-                conn.query(sql, [...params], (err1, rows) => {
+                conn.query(sql, params, (err1, rows) => {
                     if(err1) {
                         reject(err1)
                     }else {

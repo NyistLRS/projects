@@ -21,6 +21,8 @@ router.get("/checkName", login.checkName)
 router.post("/login", login.login)
 router.get('/admin/getMenus', menu.getAdminMenu)
 router.get('/admin/getMenuInfo', menu.getMenuInfo)
+router.post('/admin/setMenuInfo', menu.updateMenu)
+router.post('/admin/addMenu', menu.addMenu)
 
 module.exports = router
 

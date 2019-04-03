@@ -18,3 +18,23 @@ export const getMenuInfo = (key) => {
         }
     })
 }
+
+export const setMenuInfo = (data) => {
+    return request({
+        method: 'post',
+        url: '/admin/setMenuInfo',
+        data: {
+            ...data
+        }
+    })
+}
+
+export const addMenu = (data) => {
+    return request({
+        method: 'post',
+        url: '/admin/addMenu',
+        data: {
+            ...data
+        }
+    })
+}
