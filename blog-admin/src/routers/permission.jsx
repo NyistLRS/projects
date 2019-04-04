@@ -5,7 +5,6 @@ import getRouter from '../utils/getRouter.js'
 
 export default class PermissRouter extends Component {
     render() {
-        debugger
         let { location } = window,
             route = getRouter(location.pathname)
         if (location.pathname !== '/login') {

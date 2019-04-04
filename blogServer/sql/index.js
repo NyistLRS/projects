@@ -11,6 +11,7 @@ module.exports = {
         getAdminMenu: 'SELECT * FROM ADMIN_MENU',
         getMenuInfo: 'SELECT * FROM ADMIN_MENU',
         setMenuInfo: 'UPDATE ADMIN_MENU SET ',
-        addMenu: 'INSERT INTO ADMIN_MENU SET ?'
+        addMenu: 'INSERT INTO ADMIN_MENU SET ?',
+        delMenu: 'DELETE FROM ADMIN_MENU WHERE ID ='
     }
 }

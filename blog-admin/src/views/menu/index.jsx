@@ -1,6 +1,6 @@
 import React from 'react'
-import { Input, Button, Table, Icon, Modal,Form  } from 'antd'
-import { getMenuInfo, setMenuInfo, addMenu } from '../../api/menu/index'
+import { Input, Button, Table, Icon, Modal, Form, message, Select  } from 'antd'
+import { getMenuInfo, setMenuInfo, addMenu, delMenu } from '../../api/menu/index'
 import "./index.scss"
 const Search  = Input.Search
 const EditModal = Form.create()(
@@ -29,6 +29,7 @@ const EditModal = Form.create()(
                 okText="确定"
                 cancelText="取消"
                 centered
+                destroyOnClose
             >
                 <Form.Item
                     label="菜单名称"
@@ -84,7 +85,10 @@ export default class MenuManager extends React.Component {
         selectId: '',
         selectMenuName: '',
         selectPathName: '',
-        selectIcon: ''
+        selectIcon: '',
+        type: null,
+        serachVal: '',
+        searchKey: 'id'
     }
     componentWillMount() {
         this.getTableData()
@@ -111,10 +115,10 @@ export default class MenuManager extends React.Component {
                 dataIndex: '',
                 render: (res) => (
                     <span>
-                        <span style={{ marginRight: 10, color: '#1890ff',cursor: 'pointer'}} onClick={() => this.actionBtn(0,res)}>
+                        <span style={{ marginRight: 10, color: '#1890ff', cursor: 'pointer' }} onClick={() => this.actionBtn(0,res)}>
                             <Icon type="edit" />
                         </span>
-                        <span style={{ marginRight: 10, color: '#1890ff', cursor: 'pointer' }} onClick={() => this.actionBtn(1)}>
+                        <span style={{ marginRight: 10, color: '#1890ff', cursor: 'pointer' }} onClick={() => this.actionBtn(1,res)}>
                             <Icon type="delete" />
                         </span>
                     </span>
@@ -125,12 +129,21 @@ export default class MenuManager extends React.Component {
             <div className="menu-list">
                 <div className="tool-bar">
                     <Button type="primary" onClick={this.addMenu.bind(this)}>新增菜单</Button>
-                    <Search
-                        placeholder="请输入菜单名称或者菜单路径"
-                        style={{ width: 260,marginRight: 20,marginLeft: 20 }}
-                        onSearch={value => console.log(value)}
-                    />
-                    <Button type="primary">搜索</Button>
+                    <Input.Group compact style={{ width: 260, marginRight: 20, marginLeft: 20,display: 'inline-block',verticalAlign: 'top' }}>
+                        <Input
+                            style={{ width: '60%' }}
+                            placeholder="请输入菜单名称或者菜单路径"
+                            onChange={this.searchChange.bind(this)}
+                        />
+                        <Select defaultValue={this.state.searchKey} onChange={this.selectChange.bind(this)}>
+                            <Select.Option value="id">菜单ID</Select.Option>
+                            <Select.Option value="title">菜单名称</Select.Option>
+                            <Select.Option value="pathname">菜单路径</Select.Option>
+                        </Select>
+                        
+                    </Input.Group>
+                    
+                    <Button type="primary" onClick={this.serach.bind(this)}>搜索</Button>
                 </div>
                 <div className="table-content">
                     <Table columns={columns} dataSource={this.state.data} bordered rowKey="id" />
@@ -150,24 +163,48 @@ export default class MenuManager extends React.Component {
     actionBtn(val,row) {
         if(!val) {
             this.setState({
+                type: 'edit',
                 visible: true,
                 selectId: row.id,
                 selectMenuName: row.title,
                 selectIcon: row.icon,
                 selectPathName: row.pathname
             })
+        }else{
+            delMenu(row.id).then(res =>{
+                this.getTableData()
+                message.success('删除成功!')
+            })
         }
         console.log(val)
     }
-    getTableData() {
-        getMenuInfo().then(res => {
+    getTableData(val) {
+        getMenuInfo(val).then(res => {
             this.setState({
                 data: res.data
             })
         })
     }
+    serach() {
+        let arg = {
+            name: this.state.searchKey,
+            value: this.state.serachVal
+        }
+        this.getTableData(arg)
+    }
+    selectChange(val){
+        this.setState({
+            searchKey: val
+        })
+    }
+    searchChange(val){ // 搜索输入框的值
+        this.setState({
+            serachVal: val.target.value
+        })
+    }
     addMenu() {
         this.setState({
+            type: 'add',
             visible: true,
             selectId: '',
             selectPathName: '',
@@ -200,28 +237,38 @@ export default class MenuManager extends React.Component {
         console.log(this.state[name])
     }
     handleOk() {
-        setMenuInfo({ // 编辑操作
-            id: this.state.selectId,
-            menuName: this.state.selectMenuName,
-            pathName: this.state.selectPathName,
-            icon: this.state.selectIcon
-        }).then(res => { // 修改菜单信息
-            console.log(res)
-            if(!res.result){
-                return
-            }
-            this.setState({
-                visible: false,
-                selectId: ''
+        if(this.state.type == 'edit'){
+            setMenuInfo({ // 编辑操作
+                id: this.state.selectId,
+                menuName: this.state.selectMenuName,
+                pathName: this.state.selectPathName,
+                icon: this.state.selectIcon
+            }).then(res => { // 修改菜单信息
+                console.log(res)
+                if (!res.result) {
+                    return
+                }
+                this.getTableData()
+                this.setState({
+                    visible: false,
+                    selectId: ''
+                })
             })
-            this.getTableData()
-        })
-        addMenu({ // 新增操作
-            menuName: this.state.selectMenuName,
-            pathName: this.state.selectPathName,
-            icon: this.state.selectIcon
-        }).then(res => {
-
+        }else{
+            addMenu({ // 新增操作
+                menuName: this.state.selectMenuName,
+                pathName: this.state.selectPathName,
+                icon: this.state.selectIcon
+            }).then(res => {
+                this.getTableData()
+            })
+        }
+        this.setState({
+            visible: false,
+            selectId: '',
+            selectPathName: '',
+            selectMenuName: '',
+            selectIcon: '',
         })
     }
     handleCancel() {

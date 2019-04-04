@@ -38,3 +38,13 @@ export const addMenu = (data) => {
         }
     })
 }
+
+export const delMenu = (id) => {
+    return request({
+        method: 'get',
+        url: '/admin/delMenu',
+        params: {
+            id: id
+        }
+    })
+}

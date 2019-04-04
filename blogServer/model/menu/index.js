@@ -1,11 +1,12 @@
 const db = require("../../db/index.js")
 const sqls = require("../../sql/index.js")
 const utils = require("../../utils/index.js")
-exports.getAdminMenu = async function (ctx, next) {
+exports.getAdminMenu = async function (ctx, next) { // 得到全部菜单
     let sql = sqls.menu.getAdminMenu
     let msg = '请求成功！', code = 200
     console.log(sql, 'sql')
     let result = await db(sql, [])
+    // console.log(result)
     ctx.body = {
         code: code,
         msg: msg,
@@ -13,13 +14,16 @@ exports.getAdminMenu = async function (ctx, next) {
     }
 }
 
-exports.getMenuInfo = async function(ctx, netx) {
+exports.getMenuInfo = async function(ctx, netx) { // 查询菜单
     let sql = sqls.menu.getMenuInfo
-    let msg = "请求成功！",code=200,params = ctx.request.body
-    if (JSON.stringify(ctx.request.body) !== '{}') {
-        sql = `${sql} WHERE ${params.name} Like ${params.value}`
+    let msg = "请求成功！",code=200,params = ctx.request.query
+    // console.log(params)
+    if (JSON.stringify(params) !== '{}') {
+        sql = `${sql} WHERE ${params.name} Like '%${params.value}%'`
     }
+    // console.log(sql)
     let result = await db(sql, [])
+    // console.log(result)
     ctx.body = {
         code: code,
         msg: msg,
@@ -27,7 +31,7 @@ exports.getMenuInfo = async function(ctx, netx) {
     }
 }
 
-exports.updateMenu = async function(ctx, next) {
+exports.updateMenu = async function(ctx, next) { // 修改菜单
     let sql = sqls.menu.setMenuInfo
     let msg = "操作成功！",
         code = 200,
@@ -59,12 +63,12 @@ exports.updateMenu = async function(ctx, next) {
     }
 }
 
-exports.addMenu = async function(ctx,netx) {
+exports.addMenu = async function(ctx,netx) { // 新增菜单
     let sql = sqls.menu.addMenu,
         code = 200,
-        msg = '插入成功!',
+        msg = '操作成功!',
         params = ctx.request.body
-    console.log(params)
+    // console.log(params)
     let result = await db(sql, 
         {
             id: new Date().getTime() + utils.getUnique(3),
@@ -73,12 +77,31 @@ exports.addMenu = async function(ctx,netx) {
             pathname: params.pathName
         }
         )
-    if(result){
-        msg = '新增失败!'
+    if(!result){
+        msg = '操作失败!'
     }
     ctx.body = {
         code: code,
         msg: msg
+    }
+}
+
+exports.delMenu = async function(ctx,next) {
+    let sql = sqls.menu.delMenu
+    let params = ctx.request.query
+    if(!params.id){
+        ctx.body = {
+            code: 100,
+            msg: '缺少菜单id'
+        }
+    }
+    sql = `${sql}'${params.id}'`
+    console.log(sql)
+    let result = await db(sql, {})
+    console.log(result)
+    ctx.body = {
+        code: 200,
+        msg: '操作成功！'
     }
 }
 

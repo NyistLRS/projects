@@ -23,6 +23,7 @@ router.get('/admin/getMenus', menu.getAdminMenu)
 router.get('/admin/getMenuInfo', menu.getMenuInfo)
 router.post('/admin/setMenuInfo', menu.updateMenu)
 router.post('/admin/addMenu', menu.addMenu)
+router.get('/admin/delMenu', menu.delMenu)
 
 module.exports = router
 
