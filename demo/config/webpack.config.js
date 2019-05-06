@@ -1,11 +1,12 @@
 const path = require("path") // node 自带的
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 module.exports = {
     entry: path.resolve(__dirname, '../src/main.js'),
     output: {
         path: path.resolve(__dirname, '../dist'),
-        filename: '[name]-[hash].js',
-        publicPath: 'static',
+        filename: 'js/[name]-[hash].js',
+        publicPath: '',
     },
     devServer: {
         host: 'localhost',
@@ -14,10 +15,17 @@ module.exports = {
         open: true,
         stats: "errors-only"
     },
+    resolve: {
+        extensions: ['.js','.vue','.json'],
+        alias: {
+            'vue$': 'vue/dist/vue.esm.js',
+            '@': path.resolve(__dirname, '../src')
+        }
+    },
     module: {
         rules: [
             {
-                test: /\.css/,
+                test: /\.css$/,
                 use: ['style-loader','css-loader'],
                 exclude: /node_modules/,
                 include: path.resolve(__dirname, '../src')
@@ -33,25 +41,26 @@ module.exports = {
                     }
                 ]
             },{
-                test: /\.(less|scss)/,
-                use: ['style-loader', 'less-loader','sass-loader'],
+                test: /\.(less|scss)$/,
+                use: ['style-loader','css-loader', 'less-loader','sass-loader'],
                 exclude: /node_modules/,
                 include: path.resolve(__dirname, '../src')
             },{
-                test: /\.(js|vue)/,
-                use: [
-                    {
-                        loader: 'babel-loader',
-                        options: {
-                            preset: ['@babel/preser-env']
-                        },
-                        plugins: [
-                            [require("@babel/plugin-proposal-decorators"),{"legacy":true}]
+                test: /\.js$/,
+                use: [{
+                    loader: 'babel-loader',
+                    options: {
+                        "babelrc": false,
+                        "plugins": [
+                            "dynamic-import-webpack"
                         ]
                     }
-                ],
+                }],
                 exclude: /node_modules/,
                 include: path.resolve(__dirname, '../src')
+            },{
+                test: /\.vue$/,
+                use: ['vue-loader']
             }
         ]
     },
@@ -59,7 +68,8 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: path.resolve(__dirname, '../index.html'),
             minify: true,
-            publicPath: 'static'
-        })
+            // publicPath: 'static'
+        }),
+        new VueLoaderPlugin()
     ]
 }

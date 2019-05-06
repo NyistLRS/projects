@@ -1,7 +1,11 @@
-const path = require("path")
+import Vue from 'vue'
+import router from './router'
+import App from './App.vue'
+import store from './store'
 
-const dir = path.resolve(__dirname, 'src')
-
-// const a
-
-console.log(dir)
+new Vue({
+    el: '#app',
+    router,
+    components: { App },
+    template: '<App/>'
+})
